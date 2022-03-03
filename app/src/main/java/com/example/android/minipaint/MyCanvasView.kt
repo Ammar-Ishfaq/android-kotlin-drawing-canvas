@@ -16,17 +16,16 @@
 
 package com.example.android.minipaint
 
+import android.R.attr.radius
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.Rect
+import android.graphics.*
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.res.ResourcesCompat
 import com.example.minipaint.R
+
 
 // Stroke width for the the paint.
 private const val STROKE_WIDTH = 12f
@@ -41,7 +40,7 @@ class MyCanvasView(context: Context) : View(context) {
 
     private val drawColor = ResourcesCompat.getColor(resources, R.color.colorPaint, null)
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.colorBackground, null)
-    private lateinit var extraCanvas: Canvas
+    public lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
     private lateinit var frame: Rect
 
@@ -87,13 +86,18 @@ class MyCanvasView(context: Context) : View(context) {
         // Calculate a rectangular frame around the picture.
         val inset = 40
         frame = Rect(inset, inset, width - inset, height - inset)
+//        frame = Rect(2 * inset, 2 * inset, width - 2 * inset, height - 2 * inset)
     }
 
+    @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         // Draw the bitmap that has the saved path.
         canvas.drawBitmap(extraBitmap, 0f, 0f, null)
         // Draw a frame around the canvas.
         extraCanvas.drawRect(frame, paint)
+
+        extraCanvas.drawCircleExt(MCircle(width / 2f, height / 2f, 300f, 30f, Color.BLACK, false))
+        extraCanvas.drawSemiCircle(MSemieCircle(width / 3f, height / 3f, 300f, 50f, Color.WHITE))
     }
 
     /**
@@ -132,7 +136,12 @@ class MyCanvasView(context: Context) : View(context) {
         if (dx >= touchTolerance || dy >= touchTolerance) {
             // QuadTo() adds a quadratic bezier from the last point,
             // approaching control point (x1,y1), and ending at (x2,y2).
-            path.quadTo(currentX, currentY, (motionTouchEventX + currentX) / 2, (motionTouchEventY + currentY) / 2)
+            path.quadTo(
+                currentX,
+                currentY,
+                (motionTouchEventX + currentX) / 2,
+                (motionTouchEventY + currentY) / 2
+            )
             currentX = motionTouchEventX
             currentY = motionTouchEventY
             // Draw the path in the extra bitmap to save it.
