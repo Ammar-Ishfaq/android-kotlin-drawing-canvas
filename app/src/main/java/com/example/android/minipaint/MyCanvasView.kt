@@ -25,6 +25,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.res.ResourcesCompat
 import com.example.minipaint.R
+import java.util.*
 
 
 // Stroke width for the the paint.
@@ -98,6 +99,38 @@ class MyCanvasView(context: Context) : View(context) {
 
         extraCanvas.drawCircleExt(MCircle(width / 2f, height / 2f, 300f, 30f, Color.BLACK, false))
         extraCanvas.drawSemiCircle(MSemieCircle(width / 3f, height / 3f, 300f, 50f, Color.WHITE))
+        drawDynamicRectanglesLayer()
+    }
+
+    private fun drawDynamicRectanglesLayer() {
+        val mW = width
+        val mH = height
+        val mxHeightRow = 150f
+
+        val rectSize = 100f
+        var maxSpace = width
+        for (i in 1..4) {
+            val random = Random()
+            val randomSpace = random.nextInt(100)
+            maxSpace -= randomSpace
+            extraCanvas.drawRect(
+                i * rectSize + randomSpace,
+                rectSize,
+                (i + 1) * rectSize,
+                2 * rectSize,
+                paint
+            )
+
+        }
+//        extraCanvas.drawRect(rectSize, rectSize, (2 * rectSize), 2 * rectSize, paint)
+//        extraCanvas.drawRect(2 * (rectSize), rectSize, (3 * rectSize), 2 * rectSize, paint)
+//        extraCanvas.drawRect(3 * (rectSize), rectSize, (4 * rectSize), 2 * rectSize, paint)
+
+
+    }
+
+    private fun Random.nextInt(range: IntRange): Int {
+        return range.first + nextInt(range.last - range.first)
     }
 
     /**
